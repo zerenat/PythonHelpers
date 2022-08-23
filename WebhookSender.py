@@ -8,10 +8,11 @@ Python Version: 3.9
 """
 import time
 import requests
+import typing
 
 
 class WebhookSender:
-    def send_webhook(self, url: str, message: str, retry: int):
+    def send_webhook(self, url: str, message: str, retry: Optional[int] = 0):
         """
         The function handles the sending of Chime messages.
         :param url: String representation of the target Chime room's URL

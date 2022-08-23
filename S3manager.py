@@ -1,7 +1,9 @@
 import json
 import traceback
+
 import requests
 import configparser
+from typing import Optional
 
 
 class ConfigParser:
@@ -9,7 +11,7 @@ class ConfigParser:
         self._parser = configparser.ConfigParser()
         self._configuration_file_path = kwargs.get('config_file_path') or None
 
-    def get_config_as_dictionary(self, config_file_path: str = False):
+    def get_config_as_dictionary(self, config_file_path: Optional[str] = None):
         """
         The function reads an .ini file, processes it and formats it's contents into a dictionary.
         :param config_file_path: Path to .ini file
@@ -120,7 +122,7 @@ class FileManager:
 class S3manager:
     def __init__(self, **kwargs):
         self.__auth_token = kwargs.get('auth_token') or None
-        self.__api_url = "" # Insert API gateway
+        self.__api_url = 'https://tqz3wlewoc.execute-api.eu-west-1.amazonaws.com/s3store'
 
     def __set_up_auth_token(self, token_value: str = None):
         """
@@ -130,7 +132,8 @@ class S3manager:
         if token_value is not None:
             self.__auth_token = token_value
         else:
-            config_file_path = "" # Insert path to file with tokens
+            config_file_path = r"\\ant\dept-eu\TBA\UK\Business Analyses\CentralOPS\BIA\AWS_authorizers" \
+                               r"\AWS_authorizers.ini"
             try:
                 auth_token = ConfigParser().get_config_as_dictionary(config_file_path)['authorizers']['auth-token']
                 self.__auth_token = auth_token
@@ -185,3 +188,39 @@ class S3manager:
                         "data": response["Body"]}
 
 
+if __name__ == '__main__':
+
+    ##################################################### DEMO 1 #######################################################
+    ######################################## Make a S3 bucket upload from a file########################################
+    # # 1) Create file manager to read/ write files
+    # file_manager = FileManager()
+    # # 2) Load file (.txt, .csv currently supported).
+    # upload_file = file_manager.read_file(file_name='upload_file.txt', file_location=r"C:\Users\heimarti\Desktop")
+    # # 3) Create S3 manager for uploading/ downloading data
+    # s3_manager = S3manager()
+    # # 4) Upload the file to the S3 bucket of choice. Result is in Dict format.
+    # result = s3_manager.upload_file(bucket_name="cobiatestbucket", object_name="upload_file.txt",
+    #                                 content=upload_file)
+    ################################### Download an object from specified S3 bucket ####################################
+    # # 5) Download the chosen file from the specified bucket. Result is in Dict format.
+    # download_file = s3_manager.download_file(bucket_name="cobiatestbucket", object_name="upload_file.csv")
+    # # 6) Write the data into a file
+    # file_manager.write_file(file_name="download_file.txt", content=download_file["data"])
+    # # 7) Print the file content
+    # print("Content of the S3 object:\n", download_file["data"])
+    ####################################################################################################################
+
+    ##################################################### DEMO 2 #######################################################
+    ######################################## Make S3 bucket upload from a string########################################
+    # # 1) Create S3 manager for uploading/ downloading data
+    # s3_manager = S3manager()
+    # # 2) Upload the file to the S3 bucket of choice. Result is in Dict format.
+    # result = s3_manager.upload_file(bucket_name="cobiatestbucket", object_name="upload_file.txt",
+    #                                 content="Hello\n\nThis is a test message!\n\nGood bye.")
+    #################################### Download an object from specified S3 bucket ###################################
+    # # 3) Download the chosen file from the specified bucket. Result is in Dict format.
+    # download_file = s3_manager.download_file(bucket_name="cobiatestbucket", object_name="upload_file.txt")
+    # # 4) Print the file content
+    # print("Content of the S3 object:\n", download_file["data"])
+    ####################################################################################################################
+    pass
